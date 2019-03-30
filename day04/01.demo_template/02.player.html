@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/02.player.css" />
+    <link rel="stylesheet" href="./css/iconfont.css" />
+  </head>
+  <body>
+    <div id="player">
+      <h2 class="title">黑云音乐</h2>
+      <div class="search">
+        <input type="text" v-model.trim="query" @keyup.enter="search" />
+        <button @click="search">
+          <span class="iconfont icon-search"></span>
+        </button>
+      </div>
+      <p class="result">
+        搜索"{{query}}",找到<span>{{count}}</span>首单曲
+      </p>
+      <ul class="tab-wrapper">
+        <ul class="tab-bar">
+          <li
+            @click="activeIndex=0"
+            class="bar-item"
+            :class="{active:activeIndex==0}"
+          >
+            单曲
+          </li>
+          <li
+            @click="activeIndex=1"
+            class="bar-item"
+            :class="{active:activeIndex==1}"
+          >
+            专辑
+          </li>
+          <li
+            @click="activeIndex=2"
+            class="bar-item"
+            :class="{active:activeIndex==2}"
+          >
+            歌手
+          </li>
+          <li
+            @click="activeIndex=3"
+            class="bar-item"
+            :class="{active:activeIndex==3}"
+          >
+            歌单
+          </li>
+          <li
+            @click="activeIndex=4"
+            class="bar-item"
+            :class="{active:activeIndex==4}"
+          >
+            用户
+          </li>
+          <li
+            @click="activeIndex=5"
+            class="bar-item"
+            :class="{active:activeIndex==5}"
+          >
+            MV
+          </li>
+          <li
+            @click="activeIndex=6"
+            class="bar-item"
+            :class="{active:activeIndex==6}"
+          >
+            歌词
+          </li>
+          <li
+            @click="activeIndex=7"
+            class="bar-item"
+            :class="{active:activeIndex==7}"
+          >
+            电台
+          </li>
+          <li
+            @click="activeIndex=8"
+            class="bar-item"
+            :class="{active:activeIndex==8}"
+          >
+            视频
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="content-item" v-show="activeIndex==0">
+            <div class="song-wrapper" v-for="item in musicList">
+              <div class="name">
+                <span class="iconfont icon-play" @click="play(item)"></span>
+                {{item.name}}
+                <span class="iconfont icon-editmedia"></span>
+              </div>
+              <div class="singer">{{item.artists|formatArt}}</div>
+              <div class="album">《{{item.album.name}}》</div>
+              <div class="time">{{item.duration|formatDuration}}</div>
+            </div>
+          </div>
+          <div class="content-item" v-show="activeIndex==1"><img src="./img/01.png" alt=""></div>
+          <div class="content-item" v-show="activeIndex==2"><img src="./img/02.png" alt=""></div>
+          <div class="content-item" v-show="activeIndex==3"><img src="./img/03.png" alt=""></div>
+          <div class="content-item" v-show="activeIndex==4"><img src="./img/04.png" alt=""></div>
+          <div class="content-item" v-show="activeIndex==5"><img src="./img/05.png" alt=""></div>
+          <div class="content-item" v-show="activeIndex==6"><img src="./img/06.png" alt=""></div>
+          <div class="content-item" v-show="activeIndex==7"><img src="./img/07.png" alt=""></div>
+          <div class="content-item" v-show="activeIndex==8"><img src="./img/08.png" alt=""></div>
+        </div>
+      </ul>
+      <div class="player">
+        <audio :src="musicUrl" autoplay loop controls></audio>
+      </div>
+    </div>
+  </body>
+</html>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="./lib/axios.js"></script>
+<script>
+  /*
+    1.tab栏切换
+      tabbar
+        点谁 谁亮 .active  :class={active:activeIndex==自己的索引}
+        @click="activeIndex=自己的索引"
+      tabcontent
+        v-show="activeIndex==自己的索引"
+      data:
+        activeIndex
+  */
+  let app = new Vue({
+    el: '#player',
+    data: {
+      activeIndex: 0,
+      query:'',
+      musicList:[],
+      count:0,
+      musicUrl:''
+    },
+    methods: {
+      search(){
+        axios.get('https://autumnfish.cn/search?keywords=${this.query}')
+        .then(res=>{
+          this.count=res.data.result.songCount
+          this.musicList=res.data.result.songs
+        })
+      },
+      paly(item){
+        axios.get('https://autumnfish.cn/song/url?id=${item.id}')
+        .then(res=>{
+          this.musicUrl=res.data.data[0].url
+        })
+      }
+    },
+      filters:{
+        formatDuration(duration){
+          let min=Math.floor(duration/60000)
+          if(min<10){
+            min='0'+min
+          }
+          let sec=Math.floor((duration/60000)/1000)
+          if(sec<10){ 
+          }
+          return min +':'+sec
+        },
+        formatArt(artists){
+          let str=''
+          artists.forEach(v=>{
+            str +=v.name
+            str +='/'
+          })
+          str=str.slice(0,-1)
+          return str
+        }
+      }
+  })
+</script>

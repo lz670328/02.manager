@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/01.player.css" />
+    <link rel="stylesheet" href="./css/iconfont.css" />
+  </head>
+  <body>
+    <div id="player">
+      <h2 class="title">黑云音乐</h2>
+      <div class="search">
+        <input type="text" v-model.trim="query" @keyup.enter="search" />
+        <button @click="search">
+          <span class="iconfont icon-search"></span>
+        </button>
+      </div>
+      <p class="result">
+        搜索"{{ query }}",找到<span>{{ count }}</span
+        >首单曲
+      </p>
+      <ul class="tab-wrapper">
+        <ul class="tab-bar">
+          <li
+            @click="activeIndex=0"
+            class="bar-item"
+            :class="{active:activeIndex==0}"
+          >
+            单曲
+          </li>
+          <li
+            @click="activeIndex=1"
+            class="bar-item"
+            :class="{active:activeIndex==1}"
+          >
+            专辑
+          </li>
+          <li
+            @click="activeIndex=2"
+            class="bar-item"
+            :class="{active:activeIndex==2}"
+          >
+            歌手
+          </li>
+          <li
+            @click="activeIndex=3"
+            class="bar-item"
+            :class="{active:activeIndex==3}"
+          >
+            歌单
+          </li>
+          <li
+            @click="activeIndex=4"
+            class="bar-item"
+            :class="{active:activeIndex==4}"
+          >
+            用户
+          </li>
+          <li
+            @click="activeIndex=5"
+            class="bar-item"
+            :class="{active:activeIndex==5}"
+          >
+            MV
+          </li>
+          <li
+            @click="activeIndex=6"
+            class="bar-item"
+            :class="{active:activeIndex==6}"
+          >
+            歌词
+          </li>
+          <li
+            @click="activeIndex=7"
+            class="bar-item"
+            :class="{active:activeIndex==7}"
+          >
+            电台
+          </li>
+          <li
+            @click="activeIndex=8"
+            class="bar-item"
+            :class="{active:activeIndex==8}"
+          >
+            视频
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="content-item" v-show="activeIndex==0">
+            <div v-for="item in musicList" class="song-wrapper">
+              <div class="name">
+                <span class="iconfont icon-play" @click="play(item)"></span>
+                {{ item.name }}
+                <span class="iconfont icon-editmedia"></span>
+              </div>
+              <div class="singer">{{ item.artists | formatArt }}</div>
+              <div class="album">《{{ item.album.name }}》</div>
+              <div class="time">{{ item.duration | formatDuration }}</div>
+            </div>
+          </div>
+          <div class="content-item" v-show="activeIndex==1">
+            <img src="./img/01.png" alt="" />
+          </div>
+          <div class="content-item" v-show="activeIndex==2">
+            <img src="./img/02.png" alt="" />
+          </div>
+          <div class="content-item" v-show="activeIndex==3">
+            <img src="./img/03.png" alt="" />
+          </div>
+          <div class="content-item" v-show="activeIndex==4">
+            <img src="./img/04.png" alt="" />
+          </div>
+          <div class="content-item" v-show="activeIndex==5">
+            <img src="./img/05.png" alt="" />
+          </div>
+          <div class="content-item" v-show="activeIndex==6">
+            <img src="./img/06.png" alt="" />
+          </div>
+          <div class="content-item" v-show="activeIndex==7">
+            <img src="./img/07.png" alt="" />
+          </div>
+          <div class="content-item" v-show="activeIndex==8">
+            <img src="./img/08.png" alt="" />
+          </div>
+        </div>
+      </ul>
+      <div class="player">
+        <audio :src="musicUrl" autoplay loop controls></audio>
+      </div>
+    </div>
+  </body>
+</html>
+<script src="./lib/vue.js"></script>
+<script src="./lib/axios.js"></script>
+<script>
+  /*
+    1.tab栏切换
+      tabbar
+        点谁 谁亮 .active  :class={active:activeIndex==自己的索引}
+        @click="activeIndex=自己的索引"
+      tabcontent
+        v-show="activeIndex==自己的索引"
+      data:
+        activeIndex
+    2.搜索 
+      input
+        v-model.trim="query"
+        @keyup.enter=search
+      button
+        @click=search
+      data:
+        query
+        musicList
+      methods:
+        search(){
+          axios.get('')
+        }
+      tab-content
+        v-for
+    3.顶部搜索结果显示
+        搜索关键词
+          query
+        搜索的结果总条数
+          响应数据中获取
+          count
+        渲染到页面上
+          {{}}  {{}}
+    4.放歌
+        @click
+          axios
+          歌曲的url
+        data
+          musicUrl
+        auido
+          :src
+          loop
+          autoplay
+       
+  */
+  let app = new Vue({
+    el: '#player',
+    data: {
+      activeIndex: 0,
+      // 搜索
+      query: '',
+      // 歌曲列表
+      musicList: [],
+      // 总条数
+      count: 0,
+      // 歌曲url
+      musicUrl: ''
+    },
+    methods: {
+      search() {
+        axios
+          .get(`https://autumnfish.cn/search?keywords=${this.query}`)
+          .then(res => {
+            // console.log(res)
+            // 总数
+            this.count = res.data.result.songCount
+            // 歌曲
+            this.musicList = res.data.result.songs
+          })
+      },
+      // 放歌
+      play(item) {
+        axios.get(`https://autumnfish.cn/song/url?id=${item.id}`).then(res => {
+          // console.log(res);
+          this.musicUrl = res.data.data[0].url
+        })
+      }
+    },
+    // 过滤器
+    filters: {
+      // 格式化时间
+      formatDuration(duration) {
+        // console.log(duration)
+        // 毫秒 ->分秒
+        // 分 1分->60秒->60000毫秒
+        let min = Math.floor(duration / 60000)
+        if (min < 10) {
+          min = '0' + min
+        }
+        // 秒 不满 60秒的部分 不满 60000毫秒 1s-1000ms
+        let sec = Math.floor((duration % 60000) / 1000)
+        if (sec < 10) {
+          sec = '0' + sec
+        }
+        // 秒
+        return min + ':' + sec
+      },
+      // 过滤歌手
+      formatArt(artists) {
+        console.log(artists)
+        // 字符串
+        let str = ''
+        artists.forEach(v => {
+          // 拼接
+          str += v.name
+          str += '/'
+        })
+        // 去掉最后一个/
+        // 参数2 -1 倒数第二个
+        str = str.slice(0, -1)
+        return str
+      }
+    }
+  })
+</script>

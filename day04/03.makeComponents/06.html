@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <h1>高贵的心悦会员俱乐部音乐</h1>
+        <p>
+            <router-link to="/person">看小哥</router-link>
+            <router-link to="/album">看专辑</router-link>   
+        </p>
+        <router-view></router-view>
+    </div>
+</body>
+<script src="./lib/vue.js"></script>
+<script src="./lib/vue-router.js"></script>
+<script>
+    let person=Vue.component('person',{
+        template:'<div><img src="./img/01.png"></div>'
+    })
+    const album=Vue.component('album',{
+        template:'<div><img src="./img/02.png"></div>'
+    })
+    const app=new Vue({
+        el:"#app",
+        router:new VueRouter({
+            routers:[
+                {path:'/person',component:person},
+                {path:'/album',component:album}
+            ]
+        })
+    })
+</script>
+</html>

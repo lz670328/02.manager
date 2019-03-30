@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <addnum></addnum>
+    </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script id="addNumTem" type="text/x-template">
+    <div>
+        <span>{{num}}</span><input @click="add" type="button" value="+">
+    </div>
+</script>
+<script>
+    Vue.component('addnum',{
+        template:'#addNumTem',
+        data(){
+            return{
+                num:0,
+                step:2
+            }
+        },
+        methods: {
+            add(){
+                console.log('呀shi啦')
+                this.num+=this.step
+            }
+        },
+    })
+    let app=new Vue({
+        el:"app"
+    })
+</script>
+</html>

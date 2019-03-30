@@ -1,0 +1,26 @@
+#input-num {
+  width: 180px;
+  height: 40px;
+  border: 1px solid gray;
+  display: flex;
+  border-radius: 5px;
+  overflow: hidden;
+}
+#input-num button {
+  width: 50px;
+  height: 100%;
+  font-size: 25px;
+  color: gray;
+  cursor: pointer;
+}
+#input-num span {
+  height: 100%;
+  border: 1px solid gray;
+  flex: 1;
+  text-align: center;
+  line-height: 40px;
+}
+#input-num button.disabled {
+  cursor: not-allowed;
+  color: #ccc;
+}

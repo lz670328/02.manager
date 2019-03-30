@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <h2>嬲你祖宗</h2>
+        <input type="text" v-model="inputValue">
+        <p @click="changeValue">{{inputValue}}</p>
+    </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+    let app=new Vue({
+        el:"#app",
+        data:{
+            inputValue:''
+        },
+        methods:{
+            changeValue(){
+                this.inputValue='嬲噻'
+            }
+        }
+    })
+</script>
+</html>

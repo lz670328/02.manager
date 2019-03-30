@@ -1,0 +1,211 @@
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title></title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="googlebot" content="noindex, nofollow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link rel="stylesheet" type="text/css" href="./css/result-light.css" />
+
+  <link rel="stylesheet" type="text/css" href="./css/index.css" />
+
+  <style id="compiled-css" type="text/css">
+    /* 结合v-cloak */
+    [v-cloak] {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <section class="todoapp">
+    <header class="header">
+      <h1>任务清单</h1>
+      <input 
+      autofocus="autofocus" 
+      autocomplete="off" 
+      placeholder="请输入任务" 
+      class="new-todo" 
+      v-model.trim="inputValue"
+      @keyup.enter="addTodo" />
+    </header>
+    <section class="main">
+      <input 
+      type="checkbox" 
+      class="toggle-all" 
+      id="toggle-all"
+      v-model="isCheakAll"
+      />
+      <label for="toggle-all"></label>
+      <ul class="todo-list">
+        <li 
+        class="todo" 
+        v-for="(item,index) in foreachArr"
+        @dblclick="editTodo=item"
+        :class="{completed:item.isCompleted,editing:editTodo==item}" 
+        >
+          <div class="view">
+            <input 
+            type="checkbox" 
+            v-model="item.isCompleted"
+            class="toggle" 
+            />
+            <label>{{item.todo}}</label> 
+            <button class="destroy" @click="delTodo(index)"></button>
+          </div>
+          <input 
+          type="text" 
+          v-model="item.todo" 
+          @keyup.enter='editTodo=undefined' 
+          @blur='editTodo=undefined' 
+          class="edit" 
+          v-focus
+          />
+        </li>
+      </ul>
+    </section>
+    <footer class="footer">
+      <span class="todo-count">
+        <strong>{{unCompletedNum}}</strong> items left ..
+      </span>
+      <ul class="filters">
+        <li>
+          <a 
+          href="#/all" 
+          :class="{selected:filter=='All'}" 
+          @click="filter='All'"
+          >All</a>
+        </li>
+        <li>
+          <a href="#/active" 
+          :class="{selected:filter=='Active'}"
+          @click="filter='Active'"
+          >Active</a>
+        </li>
+        <li>
+          <a href="#/completed" 
+          :class="{selected:filter=='Completed'}"
+          @click="filter='Completed'"
+          >Completed</a>
+        </li>
+      </ul>
+      <button class="clear-completed" style="display: none;">
+        Clear completed
+      </button>
+    </footer>
+  </section>
+  <footer class="info">
+    <p>双击进入编辑</p>
+    <p>感谢 <a href="http://evanyou.me">Evan You</a></p>
+    <p>感谢 <a href="http://todomvc.com"></a></p>
+  </footer>
+</body>
+
+</html>
+<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+  let todoDB={
+    get(){
+      let str=window.localStorage.getItem('todo29')
+      let data
+      try {
+        data=JSON.parse(str)
+      }catch (error){
+        data=[]
+      }
+      if(!data){
+        data=[]
+      }
+      return data
+    },
+    set(todoList){
+      window.localStorage.setItem('todo29',JSON.stringify(todoList))
+    }
+  }
+  Vue.directive('focus',{
+    update(el){
+      el.focus()
+    }
+  })
+  let app = new Vue({
+    el: '.todoapp',
+    data: {
+      todoList:todoDB.get(),
+      inputValue: '',
+      editTodo:undefined,
+      filter:'All'
+    },
+    methods: {
+      addTodo() {
+        this.todoList.push({
+          todo: this.inputValue,
+          isCompleted: false
+        })
+      },
+      delTodo(index){
+        this.todoList.splice(index,1)
+      }
+    },
+    computed:{
+      unCompletedNum(){
+        let num=0
+        this.todoList.forEach(v=>{
+          if(v.isCompleted==false){
+            num++
+          }
+        })
+        return num
+      },
+      foreachArr(){
+        switch(this.filter){
+          case 'All':
+            return this.todoList
+            break
+          case 'Active':
+            let activeArr=[]
+            this.todoList.forEach(v=>{
+              if(v.isCompleted==false){
+                activeArr.push(v)
+              }
+            })
+            return activeArr
+            break
+          case 'Completed':
+            let comArr=[]
+            this.todoList.forEach(v=>{
+              if(v.isCompleted==true){
+                comArr.push(v)
+              }
+            })
+            return comArr
+            break
+        }
+      },
+      isCheakAll:{
+        get(){
+          let checkedNum=0
+          this.todoList.forEach(v=>{
+            if(v.isCompleted==true){
+              checkedNum++
+            }
+          })
+          let totalNum=this.todoList.length
+          return checkedNum==totalNum
+        },
+        set(value){
+          this.todoList.forEach(v=>{
+            v.isCompleted=value
+          })
+        }
+      }
+    }
+  })
+
+  window.onbeforeunload=function(){
+    todoDB.set(app.todoList)
+  }
+</script>

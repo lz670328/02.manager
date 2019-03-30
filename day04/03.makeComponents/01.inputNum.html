@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/03.inputNum.css" />
+  </head>
+  <body>
+    <!-- 计数器 -->
+    <div id="input-num">
+      <!-- disabled 设置为true 禁用  false 启用 -->
+      <button
+        :disabled="num<=min"
+        :class="num<=min?'disabled':''"
+        @click="num--"
+      >
+        -
+      </button>
+      <span>{{ num }}</span>
+      <button
+        :disabled="num>=max"
+        :class="num>=max?'disabled':''"
+        @click="num++"
+      >
+        +
+      </button>
+    </div>
+  </body>
+</html>
+<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+<script src="./lib/vue.js"></script>
+<!-- 编码 -->
+<script>
+  /*
+    1.点击 +  - 修改中间的内容即可
+    2.到了临界值时 显示禁用的效果 添加 移除类名即可 disabled
+  */
+  let app = new Vue({
+    el: '#input-num',
+    data: {
+      num: 0, // 计数的值
+      min: 0, // 最小值
+      max: 5 // 最大值
+    }
+  })
+</script>

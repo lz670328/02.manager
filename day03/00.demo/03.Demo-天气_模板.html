@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <style>
+      li span {
+        font-size: 30px;
+      }
+
+      #app {
+        width: 400px;
+        margin: 10px auto;
+      }
+      #app h2 {
+        font-size: 40px;
+      }
+      #app input {
+        height: 40px;
+        border-radius: 10px;
+        border: none;
+        box-shadow: 0 0 2px gray;
+        outline: none;
+        font-size: 25px;
+        padding-left: 10px;
+        width: 400px;
+      }
+      #app li {
+        list-style: none;
+        font-size: 20px;
+      }
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+      .cover {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: url("./img/loading01.gif") no-repeat center, #222222;
+        opacity: 0.5;
+      }
+      /* 动画的样式 */
+      .fade-enter-active,
+      .fade-leave-active {
+        transition: opacity 1s;
+      }
+      .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+        opacity: 0;
+      }
+      /* 列表过渡动画 */
+      .list-item {
+        display: inline-block;
+        margin-right: 10px;
+      }
+      .list-enter-active,
+      .list-leave-active {
+        transition: all 1s;
+      }
+      .list-enter, .list-leave-to
+/* .list-leave-active for below version 2.1.8 */ {
+        opacity: 0;
+        transform: translateX(100px);
+      }
+      li:nth-child(2) {
+        transition-delay: 200ms;
+      }
+      li:nth-child(3) {
+        transition-delay: 300ms;
+      }
+      li:nth-child(4) {
+        transition-delay: 400ms;
+      }
+      li:nth-child(5) {
+        transition-delay: 500ms;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="app">
+      <h2>天气查查查--{{ city }}</h2>
+      <input
+        type="text"
+        v-model.trim="city"
+        @keyup.enter="searchWeather"
+        placeholder="请输入查询的城市"
+      />
+      <transition-group name="list" tag="ul" @after-enter="afterEnter">
+        <li 
+        v-for="(item,index) in weatherList" 
+        :style="'transition-delay:'+index*100+'ms'"
+        :key="index" 
+        class="list-item"
+        >
+          <span v-if="item.type.indexOf('云')!=-1">丷</span>
+          <span v-else-if="item.type.indexOf('雨')!=-1">彳️</span>
+          <span v-else-if="item.type.indexOf('雪')!=-1">亍</span>
+          <span v-else>戒</span>
+          {{ item.date }} {{ item.high }}-{{ item.low }}
+        </li>
+      </transition-group>
+      <transition name="fade">
+        <div class="cover" v-show="cover"></div>
+      </transition>
+    </div>
+  </body>
+</html>
+<!-- 开发环境版本，包含了有帮助的命令行警告 jquery.js -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+<script>
+  /*
+    1.文本框 双向数据绑定 回车绑定 查询天气 vue-resource接口调用 
+    http://wthrcdn.etouch.cn/weather_mini?city=
+    2.调用接口时 弹出遮罩层   数据回来之后 收起遮罩层
+  */
+  let app = new Vue({
+    el: "#app",
+    data: {
+      city: "",
+      weatherList: [],
+      cover: false
+    },
+    methods: {
+      searchWeather() {
+        // 显示遮罩层
+        this.cover = true
+        this.weatherList=[]
+        this.$http
+          .get("http://wthrcdn.etouch.cn/weather_mini?city=" + this.city)
+          .then(
+            res => {
+              console.log(res);
+              this.weatherList = res.body.data.forecast;
+
+              // 隐藏遮罩层
+              setTimeout(() => {
+                this.cover = false;
+              }, 2000);
+            },
+            err => {}
+          );
+      },
+      afterEnter(el){
+        el.style=''
+      }
+    }
+  });
+</script>

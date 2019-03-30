@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        {{ message }}
+        {{app[2]}}
+        {{opp.age}}
+        <br>
+        <input type="button" value="点我呀" v-on:click='message="这是一个寂寞的天"'>
+        <input type="button" value="点我呀" v-on:click="peerless">
+        <input type="button" value="点我呀" @click='message="我有点甜"'>
+    </div>
+</body>
+<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            message: 'Hello Vue!',
+            app: ['海天盛世', '天盛长歌', '金戈铁马'],
+            opp: {
+                name: "桥爺",
+                age: "兄贵"
+            }
+        },
+        methods: {
+            peerless() {
+                this.message = '一杆梅子酒'
+            }
+        }
+    })
+</script>
+
+</html>

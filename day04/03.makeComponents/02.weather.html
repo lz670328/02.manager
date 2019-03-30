@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/02.weather.css" />
+  </head>
+
+  <body>
+    <div id="app">
+      <h2>天气查查查--{{ city }}</h2>
+      <input
+        type="text"
+        @keyup.enter="search"
+        v-model.trim="city"
+        placeholder="请输入查询的城市"
+      />
+      <transition-group name="list" tag="p">
+        <li
+          :style="{transitionDelay:index*300+'ms'}"
+          v-for="(it,index) in weatherList"
+          :key="index"
+        >
+          <span v-if="it.type.indexOf('云')!=-1">🌥️</span>
+          <span v-else-if="it.type.indexOf('雨')!=-1">🌧️</span>
+          <span v-else-if="it.type.indexOf('雪')!=-1">❄️</span>
+          <span v-else>🌞</span>
+          <!-- {{}}之间的是占位 可以使用任意的内容 -->
+          {{ it.date }}-{{ it.high }}-{{ it.low }}-{{ it.type }}
+        </li>
+      </transition-group>
+    </div>
+  </body>
+</html>
+<!-- 开发环境版本，包含了有帮助的命令行警告 jquery.js -->
+<script src="./lib/vue.js"></script>
+<script src="./lib/axios.js"></script>
+<script>
+  /*
+    1.文本框中 点击回车 获取输入的内容 
+    2.把内容通过网络接口 获取天气预报数据
+    3.把天气预报的数据渲染到页面上
+    4.根据天气决定显示的图标
+  */
+  let app = new Vue({
+    el: '#app',
+    data: {
+      // 查询的城市
+      city: '',
+      // 天气数组
+      weatherList: []
+    },
+    methods: {
+      search() {
+        // 调用接口
+        this.weatherList = []
+        axios
+          .get(`http://wthrcdn.etouch.cn/weather_mini?city=${this.city}`)
+          .then(
+            response => {
+              // 请求成功的回调
+              // console.log(response);
+              // 网速太好了 ^_^ 延迟一下
+              setTimeout(() => {
+                this.weatherList = response.data.data.forecast
+              }, 1000)
+            },
+            errResponse => {}
+          )
+      }
+    }
+  })
+</script>

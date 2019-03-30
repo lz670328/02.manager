@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/03.inputNum.css" />
+  </head>
+  <body>
+    <div id="app">
+      <h2>计数器</h2>
+      <inputnum></inputnum>
+      <inputnum></inputnum>
+      <inputnum></inputnum>
+      <inputnum></inputnum>
+      <inputnum></inputnum>
+    </div>
+  </body>
+</html>
+<!-- 计数器组件模板 -->
+<script id="inputnumT" type="text/x-template">
+  <div id="input-num">
+      <!-- disabled 设置为true 禁用  false 启用 -->
+      <button
+        :disabled="num<=min"
+        :class="num<=min?'disabled':''"
+        @click="num--"
+      >
+        -
+      </button>
+      <span>{{ num }}</span>
+      <button
+        :disabled="num>=max"
+        :class="num>=max?'disabled':''"
+        @click="num++"
+      >
+        +
+      </button>
+    </div>
+</script>
+<script src="lib/vue.js"></script>
+
+<script>
+  // 组件抽取 计数器
+  Vue.component('inputnum', {
+    template: '#inputnumT',
+    data() {
+      return {
+        num: 0, // 计数的值
+        min: 0, // 最小值
+        max: 5 // 最大值
+      }
+    }
+  })
+
+  let app = new Vue({
+    el: '#app'
+  })
+</script>

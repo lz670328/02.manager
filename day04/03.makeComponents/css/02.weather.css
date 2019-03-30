@@ -1,0 +1,35 @@
+#app {
+  width: 400px;
+  margin: 10px auto;
+}
+#app h2 {
+  font-size: 40px;
+}
+#app input {
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  box-shadow: 0 0 2px gray;
+  outline: none;
+  font-size: 25px;
+  padding-left: 10px;
+  width: 400px;
+}
+#app li {
+  list-style: none;
+  font-size: 20px;
+}
+/* 列表动画 */
+#app .list-item {
+  display: inline-block;
+  margin-right: 10px;
+}
+#app .list-enter-active,
+#app .list-leave-active {
+  transition: all 1s;
+}
+#app .list-enter,#app .list-leave-to
+/* .list-leave-active for below version 2.1.8 */ {
+  opacity: 0;
+  transform: translateX(30px);
+}
